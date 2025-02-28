@@ -1,18 +1,22 @@
 #include <Arduino.h>
+#include <CAN.h>
 
-// put function declarations here:
-int myFunction(int, int);
+const int CAN_TX = 5;
+const int CAN_RX = 4;
+const int CAN_BAUDRATE = 500;
 
+CAN can(CAN_TX, CAN_RX,CAN_BAUDRATE);
 void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+  Serial.begin(115200);
+  if (!can.begin()){
+    Serial.println("CAN init failed");
+    while (1);
+  }
+  Serial.println("CAN init success");
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-}
-
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+  uint8_t data[8] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08};
+  can.sendMessage(0x001, 8, data, false);
+  delay(1000);
 }
